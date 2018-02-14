@@ -52,14 +52,14 @@ class ResultsViewController: UIViewController {
     }
     
     @objc func switchViewStyle(){
-        if switchSegementControl.selectedSegmentIndex == 0{
+        /*if switchSegementControl.selectedSegmentIndex == 0{
             collectionView.removeFromSuperview()
             view.addSubview(listView)
         }
         else{
             listView.removeFromSuperview()
             view.addSubview(collectionView)
-        }
+        }*/
     }
     
     func searchForPokemon(){
@@ -125,6 +125,7 @@ extension ResultsViewController: UICollectionViewDataSource, UICollectionViewDel
 }
 
 extension ResultsViewController: UITableViewDelegate, UITableViewDataSource {
+    
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -133,8 +134,8 @@ extension ResultsViewController: UITableViewDelegate, UITableViewDataSource {
         return results.count
     }
     
-    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "pokemonTableCell", for: indexPath) as! PokemonCollectionViewCell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "pokemonTableCell", for: indexPath) as! PokemonTableViewCell
         for subview in cell.contentView.subviews {
             subview.removeFromSuperview()
         }
@@ -142,8 +143,7 @@ extension ResultsViewController: UITableViewDelegate, UITableViewDataSource {
         
         return cell
     }
-    
-    
+
 }
 
 
