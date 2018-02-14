@@ -25,11 +25,17 @@ class TypeCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(typeImageView)
     }
     
-    func toggleAlphaValue() {
+    func toggleSelected() {
+        chosen = !chosen
         if chosen {
             self.alpha = 1.0
         } else {
-            self.alpha = 0.2
+            self.alpha = 0.5
         }
+    }
+    
+    func toggleSelected(_ selected: Bool) {
+        chosen = !selected
+        toggleSelected()
     }
 }

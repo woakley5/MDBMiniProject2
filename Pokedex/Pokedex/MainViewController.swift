@@ -43,6 +43,11 @@ class MainViewController: UIViewController {
         minDefense = 0
         minHealth = 0
         randomInput = false
+        
+        for indexPath in typesCollectionView.indexPathsForVisibleItems {
+            let cell = typesCollectionView.cellForItem(at: indexPath) as! TypeCollectionViewCell
+            cell.toggleSelected(false)
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -104,6 +109,10 @@ class MainViewController: UIViewController {
         view.addSubview(typesCollectionView)
     }
     
+    func createAttributesLabel() {
+        
+    }
+    
     func createSearchBar() {
         searchButton = UIButton(frame: CGRect(x: 0, y: view.frame.height - 50, width: view.frame.width/2, height: 50))
         searchButton.backgroundColor = .red
@@ -145,7 +154,7 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let typeCell = cell as! TypeCollectionViewCell
         typeCell.typeImageView.image = UIImage(named: types[indexPath.item].lowercased())
-        typeCell.alpha = 0.6
+        typeCell.alpha = 0.5
     }
     
     //Sets the size of the cell
@@ -157,8 +166,7 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 //        print(indexPath.row)
         let typeCell = collectionView.cellForItem(at: indexPath) as! TypeCollectionViewCell
-        typeCell.chosen = !typeCell.chosen
-        typeCell.toggleAlphaValue()
+        typeCell.toggleSelected()
         
         let type = types[indexPath.item]
         if typeCell.chosen {
