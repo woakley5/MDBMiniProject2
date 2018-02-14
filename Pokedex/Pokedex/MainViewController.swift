@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MainViewController: UIViewController {
+class MainViewController: UIViewController, UITextFieldDelegate {
     
     var searchBar: UITextField!
     var typeLabel: UILabel!
@@ -22,6 +22,7 @@ class MainViewController: UIViewController {
     var healthTextField: UITextField!
     var searchButton: UIButton!
     var randomButton: UIButton!
+    var tap: UIGestureRecognizer!
     
     var searchInput: String!
     var selectedTypes: [String]!
@@ -54,6 +55,10 @@ class MainViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         // reset values
+        if searchBar != nil {
+            searchBar.text = ""
+        }
+        
         searchInput = ""
         selectedTypes = []
         minAttack = 0
@@ -94,6 +99,23 @@ class MainViewController: UIViewController {
         performSegue(withIdentifier: "showResults", sender: self)
     }
     
+    @objc func addGestureRecognizer(sender: UITextField) {
+        print("tapped")
+        tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tap)
+    }
+    
+    func dismissKeyboard(sender: UITapGestureRecognizer) {
+        view.endEditing(true)
+        view.removeGestureRecognizer(tap)
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        view.endEditing(true)
+        view.removeGestureRecognizer(tap)
+        return false
+    }
+    
     // MARK: Creation functions
     
     func createSearchTextField() {
@@ -102,6 +124,8 @@ class MainViewController: UIViewController {
         searchBar.textColor = .black
         searchBar.borderStyle = .roundedRect
         searchBar.placeholder = "Search"
+        searchBar.addTarget(self, action: #selector(addGestureRecognizer), for: .touchDown)
+        searchBar.delegate = self
         view.addSubview(searchBar)
     }
     
@@ -135,7 +159,7 @@ class MainViewController: UIViewController {
     
     func createAttackInputBar() {
         attackLabel = UILabel(frame: CGRect(x: 0, y: attributesLabel.frame.maxY + 10, width: view.frame.width, height: 50))
-        attackLabel.text = "  Minimum Attack"
+        attackLabel.text = "    Minimum Attack"
         attackLabel.backgroundColor = .red
         attackLabel.textColor = .white
         view.addSubview(attackLabel)
@@ -144,12 +168,14 @@ class MainViewController: UIViewController {
         attackTextField.backgroundColor = .white
         attackTextField.borderStyle = .roundedRect
         attackTextField.placeholder = "0-200"
+        attackTextField.keyboardType = .numberPad
+        attackTextField.addTarget(self, action: #selector(addGestureRecognizer), for: .touchDown)
         view.addSubview(attackTextField)
     }
     
     func createDefenseInputBar() {
         defenseLabel = UILabel(frame: CGRect(x: 0, y: attackLabel.frame.maxY, width: view.frame.width, height: 50))
-        defenseLabel.text = "  Minimum Defense"
+        defenseLabel.text = "    Minimum Defense"
         defenseLabel.backgroundColor = .blue
         defenseLabel.textColor = .white
         view.addSubview(defenseLabel)
@@ -158,12 +184,14 @@ class MainViewController: UIViewController {
         defenseTextField.backgroundColor = .white
         defenseTextField.borderStyle = .roundedRect
         defenseTextField.placeholder = "0-200"
+        defenseTextField.keyboardType = .numberPad
+        defenseTextField.addTarget(self, action: #selector(addGestureRecognizer), for: .touchDown)
         view.addSubview(defenseTextField)
     }
     
     func createHealthInputBar() {
         healthLabel = UILabel(frame: CGRect(x: 0, y: defenseLabel.frame.maxY, width: view.frame.width, height: 50))
-        healthLabel.text = "  Minimum Health Points"
+        healthLabel.text = "    Minimum Health Points"
         healthLabel.backgroundColor = .green
         healthLabel.textColor = .white
         view.addSubview(healthLabel)
@@ -172,6 +200,8 @@ class MainViewController: UIViewController {
         healthTextField.backgroundColor = .white
         healthTextField.borderStyle = .roundedRect
         healthTextField.placeholder = "0-200"
+        healthTextField.keyboardType = .numberPad
+        healthTextField.addTarget(self, action: #selector(addGestureRecognizer), for: .touchDown)
         view.addSubview(healthTextField)
     }
     
