@@ -23,8 +23,9 @@ class PokemonTableViewCell: UITableViewCell {
         pokemonImageView.clipsToBounds = true
         contentView.addSubview(pokemonImageView)
         
-        pokemonLabel = UILabel(frame: CGRect(x: d + 10, y: 10, width: 200, height: d))
-        pokemonLabel.textAlignment = .center
+        pokemonLabel = UILabel(frame: CGRect(x: d + 40, y: 10, width: 200, height: d))
+        pokemonLabel.textAlignment = .left
+        pokemonLabel.numberOfLines = 2
         contentView.addSubview(pokemonLabel)
     }
 
