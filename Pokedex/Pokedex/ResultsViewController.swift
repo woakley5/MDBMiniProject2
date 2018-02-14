@@ -14,8 +14,8 @@ class ResultsViewController: UIViewController {
     var listView: UITableView!
     var switchSegementControl: UISegmentedControl!
     
-    var textInput: String = "Pokemon"
-    var types: [String] = ["Grass"]
+    var textInput: String!
+    var types: [String]!
     var minAttack: Int = 0
     var minHealth: Int = 0
     var minDefense: Int = 0
@@ -48,6 +48,8 @@ class ResultsViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         switchSegementControl.selectedSegmentIndex = 0
+        print(textInput)
+        print(types)
         searchForPokemon()
     }
     
@@ -69,11 +71,14 @@ class ResultsViewController: UIViewController {
         
         for p in pokemon{
             let pTypeSet = Set(p.types as [String])
-            let matchesStringInput = (p.name == textInput || String(p.number) == textInput)
-            let typesMatch = typesSet.isSubset(of: pTypeSet)
-            let rangesMatch = p.attack > minAttack && p.health > minHealth && p.defense > minDefense
+            let matchesStringInput = (p.name.lowercased() == textInput.lowercased() || String(p.number) == textInput)
+            var typesMatch = false
+            if types.count != 0 {
+                typesMatch = typesSet.isSubset(of: pTypeSet)
+            }
+//            let rangesMatch = p.attack > minAttack && p.health > minHealth && p.defense > minDefense
             
-            if matchesStringInput || ( typesMatch && rangesMatch ) {
+            if (textInput.count != 0 && matchesStringInput && ( typesMatch )) || (textInput.count == 0 && typesMatch ) {
                 results.append(p)
             }
             
