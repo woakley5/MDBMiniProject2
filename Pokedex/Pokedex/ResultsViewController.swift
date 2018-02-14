@@ -52,14 +52,14 @@ class ResultsViewController: UIViewController {
     }
     
     @objc func switchViewStyle(){
-        /*if switchSegementControl.selectedSegmentIndex == 0{
+        if switchSegementControl.selectedSegmentIndex == 1{
             collectionView.removeFromSuperview()
             view.addSubview(listView)
         }
         else{
             listView.removeFromSuperview()
             view.addSubview(collectionView)
-        }*/
+        }
     }
     
     func searchForPokemon(){
@@ -130,6 +130,10 @@ extension ResultsViewController: UITableViewDelegate, UITableViewDataSource {
         return 1
     }
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 100
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return results.count
     }
@@ -142,6 +146,22 @@ extension ResultsViewController: UITableViewDelegate, UITableViewDataSource {
         cell.awakeFromNib()
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let cell = cell as! PokemonTableViewCell
+        cell.pokemonLabel.text =  String(results[indexPath.row].number) + " - " + results[indexPath.row].name.components(separatedBy: " ")[0] //removes everything after first space
+        do {
+            let data = try Data(contentsOf: URL(string: results[indexPath.row].imageUrl)!)
+            cell.pokemonImageView.image = UIImage(data: data)
+        }
+        catch _{
+            print("Error getting image")
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("Tapped a row!")
     }
 
 }
