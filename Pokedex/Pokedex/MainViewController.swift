@@ -8,13 +8,21 @@
 
 import UIKit
 
-class MainViewController: UIViewController {
+class MainViewController: UIViewController, UITextFieldDelegate {
     
     var searchBar: UITextField!
     var typeLabel: UILabel!
     var typesCollectionView: UICollectionView!
+    var attributesLabel: UILabel!
+    var attackLabel: UILabel!
+    var attackTextField: UITextField!
+    var defenseLabel: UILabel!
+    var defenseTextField: UITextField!
+    var healthLabel: UILabel!
+    var healthTextField: UITextField!
     var searchButton: UIButton!
     var randomButton: UIButton!
+    var tap: UIGestureRecognizer!
     
     var searchInput: String!
     var selectedTypes: [String]!
@@ -24,6 +32,7 @@ class MainViewController: UIViewController {
     var randomInput: Bool!
     
     let types = ["Bug", "Dark", "Dragon", "Electric", "Fairy", "Fighting", "Fire", "Flying", "Ghost", "Grass", "Ground", "Ice", "Normal", "Poison", "Psychic", "Rock", "Steel", "Water"]
+    var pokemon = PokemonGenerator.getPokemonArray()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,17 +47,35 @@ class MainViewController: UIViewController {
         createSearchTextField()
         createTypeLabel()
         createTypesGrid()
+        createAttributesLabel()
+        createAttackInputBar()
+        createDefenseInputBar()
+        createHealthInputBar()
         createSearchBar()
+        
+        sortPokemon()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         // reset values
+        if searchBar != nil {
+            searchBar.text = ""
+            attackTextField.text = ""
+            defenseTextField.text = ""
+            healthTextField.text = ""
+        }
+        
         searchInput = ""
         selectedTypes = []
         minAttack = 0
         minDefense = 0
         minHealth = 0
         randomInput = false
+        
+        for indexPath in typesCollectionView.indexPathsForVisibleItems {
+            let cell = typesCollectionView.cellForItem(at: indexPath) as! TypeCollectionViewCell
+            cell.toggleSelected(false)
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -65,11 +92,23 @@ class MainViewController: UIViewController {
             vc?.minDefense = minDefense
             vc?.minHealth = minHealth
             vc?.random = randomInput
+            vc?.pokemon = pokemon
         }
     }
     
     @objc func searchButtontapped() {
-        searchInput = searchBar.text
+        if searchBar.text != "" {
+            searchInput = searchBar.text
+        }
+        if attackTextField.text != "" {
+            minAttack = Int(attackTextField.text!)
+        }
+        if defenseTextField.text != "" {
+            minDefense = Int(defenseTextField.text!)
+        }
+        if healthTextField.text != "" {
+            minHealth = Int(healthTextField.text!)
+        }
         performSegue(withIdentifier: "showResults", sender: self)
     }
     
@@ -78,15 +117,61 @@ class MainViewController: UIViewController {
         performSegue(withIdentifier: "showResults", sender: self)
     }
     
+    @objc func addGestureRecognizer(sender: UITextField) {
+        print("tapped")
+        tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tap)
+        
+//        let hidden = view.frame.height - sender.frame.maxY - 226.0
+//        if hidden < 0 && view.frame.origin.y == 0.0 {
+//            slideViewUp(hidden)
+//        }
+        if sender != searchBar && view.frame.origin.y == 0.0 {
+            slideViewUp()
+        }
+    }
+    
+    func dismissKeyboard(sender: UITapGestureRecognizer) {
+        view.endEditing(true)
+        view.removeGestureRecognizer(tap)
+        slideViewDown()
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        view.endEditing(true)
+        view.removeGestureRecognizer(tap)
+        slideViewDown()
+        return false
+    }
+    
+    func slideViewUp() {
+        let hiddenY = view.frame.height - healthLabel.frame.maxY - 216.0
+        UIView.animate(withDuration: 0.4, animations: {self.view.frame.origin.y += hiddenY})
+    }
+    
+    func slideViewDown() {
+        UIView.animate(withDuration: 0.2, animations: {self.view.frame.origin.y = 0.0})
+    }
+    
+    func sortPokemon() {
+        pokemon = pokemon.sorted(by: {p1,p2 in
+            if p1.number == p2.number {
+                return p1.name < p2.name
+            }
+            return p1.number < p2.number
+        })
+    }
+    
     // MARK: Creation functions
     
     func createSearchTextField() {
-        searchBar = UITextField(frame: CGRect(x: 20, y: 75, width: view.frame.width - 40, height: 40))
+        searchBar = UITextField(frame: CGRect(x: 20, y: 80, width: view.frame.width - 40, height: 40))
         searchBar.layer.cornerRadius = 5
         searchBar.textColor = .black
         searchBar.borderStyle = .roundedRect
-        searchBar.layer.borderColor = UIColor.black.cgColor
         searchBar.placeholder = "Search"
+        searchBar.addTarget(self, action: #selector(addGestureRecognizer), for: .touchDown)
+        searchBar.delegate = self
         view.addSubview(searchBar)
     }
     
@@ -102,12 +187,68 @@ class MainViewController: UIViewController {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 0
-        typesCollectionView = UICollectionView(frame: CGRect(x: 20, y: typeLabel.frame.maxY + 10, width: view.frame.width - 40, height: 500), collectionViewLayout: layout)
+        typesCollectionView = UICollectionView(frame: CGRect(x: 20, y: typeLabel.frame.maxY + 10, width: view.frame.width - 40, height: 150), collectionViewLayout: layout)
         typesCollectionView.register(TypeCollectionViewCell.self, forCellWithReuseIdentifier: "typeCell")
         typesCollectionView.backgroundColor = .white
         typesCollectionView.delegate = self
         typesCollectionView.dataSource = self
         view.addSubview(typesCollectionView)
+    }
+    
+    func createAttributesLabel() {
+        attributesLabel = UILabel(frame: CGRect(x: 20, y: typesCollectionView.frame.maxY + 20, width: view.frame.width - 40, height: 40))
+        attributesLabel.text = "Attributes"
+        attributesLabel.font = UIFont.systemFont(ofSize: 30)
+        attributesLabel.textColor = .black
+        view.addSubview(attributesLabel)
+    }
+    
+    func createAttackInputBar() {
+        attackLabel = UILabel(frame: CGRect(x: 0, y: attributesLabel.frame.maxY + 10, width: view.frame.width, height: 50))
+        attackLabel.text = "    Minimum Attack"
+        attackLabel.backgroundColor = .red
+        attackLabel.textColor = .white
+        view.addSubview(attackLabel)
+        
+        attackTextField = UITextField(frame: CGRect(x: view.frame.width - 80, y: attackLabel.frame.minY + 10, width: 70, height: 30))
+        attackTextField.backgroundColor = .white
+        attackTextField.borderStyle = .roundedRect
+        attackTextField.placeholder = "0-200"
+        attackTextField.keyboardType = .numberPad
+        attackTextField.addTarget(self, action: #selector(addGestureRecognizer), for: .touchDown)
+        view.addSubview(attackTextField)
+    }
+    
+    func createDefenseInputBar() {
+        defenseLabel = UILabel(frame: CGRect(x: 0, y: attackLabel.frame.maxY, width: view.frame.width, height: 50))
+        defenseLabel.text = "    Minimum Defense"
+        defenseLabel.backgroundColor = .blue
+        defenseLabel.textColor = .white
+        view.addSubview(defenseLabel)
+        
+        defenseTextField = UITextField(frame: CGRect(x: view.frame.width - 80, y: defenseLabel.frame.minY + 10, width: 70, height: 30))
+        defenseTextField.backgroundColor = .white
+        defenseTextField.borderStyle = .roundedRect
+        defenseTextField.placeholder = "0-200"
+        defenseTextField.keyboardType = .numberPad
+        defenseTextField.addTarget(self, action: #selector(addGestureRecognizer), for: .touchDown)
+        view.addSubview(defenseTextField)
+    }
+    
+    func createHealthInputBar() {
+        healthLabel = UILabel(frame: CGRect(x: 0, y: defenseLabel.frame.maxY, width: view.frame.width, height: 50))
+        healthLabel.text = "    Minimum Health Points"
+        healthLabel.backgroundColor = .green
+        healthLabel.textColor = .white
+        view.addSubview(healthLabel)
+        
+        healthTextField = UITextField(frame: CGRect(x: view.frame.width - 80, y: healthLabel.frame.minY + 10, width: 70, height: 30))
+        healthTextField.backgroundColor = .white
+        healthTextField.borderStyle = .roundedRect
+        healthTextField.placeholder = "0-200"
+        healthTextField.keyboardType = .numberPad
+        healthTextField.addTarget(self, action: #selector(addGestureRecognizer), for: .touchDown)
+        view.addSubview(healthTextField)
     }
     
     func createSearchBar() {
@@ -151,7 +292,7 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let typeCell = cell as! TypeCollectionViewCell
         typeCell.typeImageView.image = UIImage(named: types[indexPath.item].lowercased())
-        typeCell.alpha = 0.6
+        typeCell.alpha = 0.5
     }
     
     //Sets the size of the cell
@@ -163,8 +304,7 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 //        print(indexPath.row)
         let typeCell = collectionView.cellForItem(at: indexPath) as! TypeCollectionViewCell
-        typeCell.chosen = !typeCell.chosen
-        typeCell.toggleAlphaValue()
+        typeCell.toggleSelected()
         
         let type = types[indexPath.item]
         if typeCell.chosen {
