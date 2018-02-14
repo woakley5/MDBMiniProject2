@@ -32,6 +32,7 @@ class MainViewController: UIViewController, UITextFieldDelegate {
     var randomInput: Bool!
     
     let types = ["Bug", "Dark", "Dragon", "Electric", "Fairy", "Fighting", "Fire", "Flying", "Ghost", "Grass", "Ground", "Ice", "Normal", "Poison", "Psychic", "Rock", "Steel", "Water"]
+    var pokemon = PokemonGenerator.getPokemonArray()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,12 +52,17 @@ class MainViewController: UIViewController, UITextFieldDelegate {
         createDefenseInputBar()
         createHealthInputBar()
         createSearchBar()
+        
+        sortPokemon()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         // reset values
         if searchBar != nil {
             searchBar.text = ""
+            attackTextField.text = ""
+            defenseTextField.text = ""
+            healthTextField.text = ""
         }
         
         searchInput = ""
@@ -86,11 +92,23 @@ class MainViewController: UIViewController, UITextFieldDelegate {
             vc?.minDefense = minDefense
             vc?.minHealth = minHealth
             vc?.random = randomInput
+            vc?.pokemon = pokemon
         }
     }
     
     @objc func searchButtontapped() {
-        searchInput = searchBar.text
+        if searchBar.text != "" {
+            searchInput = searchBar.text
+        }
+        if attackTextField.text != "" {
+            minAttack = Int(attackTextField.text!)
+        }
+        if defenseTextField.text != "" {
+            minDefense = Int(defenseTextField.text!)
+        }
+        if healthTextField.text != "" {
+            minHealth = Int(healthTextField.text!)
+        }
         performSegue(withIdentifier: "showResults", sender: self)
     }
     
@@ -103,17 +121,45 @@ class MainViewController: UIViewController, UITextFieldDelegate {
         print("tapped")
         tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tap)
+        
+//        let hidden = view.frame.height - sender.frame.maxY - 226.0
+//        if hidden < 0 && view.frame.origin.y == 0.0 {
+//            slideViewUp(hidden)
+//        }
+        if sender != searchBar && view.frame.origin.y == 0.0 {
+            slideViewUp()
+        }
     }
     
     func dismissKeyboard(sender: UITapGestureRecognizer) {
         view.endEditing(true)
         view.removeGestureRecognizer(tap)
+        slideViewDown()
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         view.endEditing(true)
         view.removeGestureRecognizer(tap)
+        slideViewDown()
         return false
+    }
+    
+    func slideViewUp() {
+        let hiddenY = view.frame.height - healthLabel.frame.maxY - 216.0
+        UIView.animate(withDuration: 0.4, animations: {self.view.frame.origin.y += hiddenY})
+    }
+    
+    func slideViewDown() {
+        UIView.animate(withDuration: 0.2, animations: {self.view.frame.origin.y = 0.0})
+    }
+    
+    func sortPokemon() {
+        pokemon = pokemon.sorted(by: {p1,p2 in
+            if p1.number == p2.number {
+                return p1.name < p2.name
+            }
+            return p1.number < p2.number
+        })
     }
     
     // MARK: Creation functions

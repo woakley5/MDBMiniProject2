@@ -22,6 +22,7 @@ class ResultsViewController: UIViewController {
     var random: Bool = false
     
     var results: [Pokemon] = []
+    var pokemon: [Pokemon] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,20 +67,20 @@ class ResultsViewController: UIViewController {
     }
     
     func searchForPokemon(){
-        let pokemon = PokemonGenerator.getPokemonArray()
+//        let pokemon = PokemonGenerator.getPokemonArray()
         let typesSet = Set(types)
         results.removeAll()
-        
+
         for p in pokemon{
             let pTypeSet = Set(p.types as [String])
-            let matchesStringInput = (p.name.lowercased() == textInput.lowercased() || String(p.number) == textInput)
+            let matchesStringInput = (p.name.lowercased().hasPrefix(textInput.lowercased()) || String(p.number) == textInput)
             var typesMatch = true
             if types.count != 0 {
                 typesMatch = typesSet.isSubset(of: pTypeSet)
             }
-//            let rangesMatch = p.attack > minAttack && p.health > minHealth && p.defense > minDefense
+            let rangesMatch = p.attack > minAttack && p.health > minHealth && p.defense > minDefense
             
-            if (textInput.count != 0 && matchesStringInput && ( typesMatch )) || (textInput.count == 0 && typesMatch ) {
+            if (textInput.count != 0 && matchesStringInput && ( typesMatch && rangesMatch )) || (textInput.count == 0 && ( typesMatch && rangesMatch ) ) {
                 results.append(p)
             }
             
