@@ -26,6 +26,7 @@ class ResultsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        navigationItem.title = "Search Results"
         let layout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsetsMake(5, 5, 5, 5)
         collectionView = UICollectionView(frame: view.frame, collectionViewLayout: layout)
@@ -72,7 +73,7 @@ class ResultsViewController: UIViewController {
         for p in pokemon{
             let pTypeSet = Set(p.types as [String])
             let matchesStringInput = (p.name.lowercased() == textInput.lowercased() || String(p.number) == textInput)
-            var typesMatch = false
+            var typesMatch = true
             if types.count != 0 {
                 typesMatch = typesSet.isSubset(of: pTypeSet)
             }
@@ -89,6 +90,7 @@ class ResultsViewController: UIViewController {
     }
 }
 
+//COLLECTION VIEW EXTENSION
 extension ResultsViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
@@ -111,12 +113,19 @@ extension ResultsViewController: UICollectionViewDataSource, UICollectionViewDel
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let cell = cell as! PokemonCollectionViewCell
         cell.pokemonLabel.text =  String(results[indexPath.row].number) + " - " + results[indexPath.row].name.components(separatedBy: " ")[0] //removes everything after first space
-        do {
-            let data = try Data(contentsOf: URL(string: results[indexPath.row].imageUrl)!)
-            cell.pokemonImageView.image = UIImage(data: data)
+        let url = URL(string: results[indexPath.row].imageUrl)
+        if url != nil{
+            do {
+                let data = try Data(contentsOf: url!)
+                cell.pokemonImageView.image = UIImage(data: data)
+                
+            }
+            catch _{
+                print("Error getting image")
+            }
         }
-        catch _{
-            print("Error getting image")
+        else{
+            print("Broken URL for " + results[indexPath.row].name)
         }
     }
     
@@ -129,6 +138,7 @@ extension ResultsViewController: UICollectionViewDataSource, UICollectionViewDel
     }
 }
 
+//TABLE VIEW EXTENSION
 extension ResultsViewController: UITableViewDelegate, UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -155,20 +165,28 @@ extension ResultsViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let cell = cell as! PokemonTableViewCell
-        cell.pokemonLabel.text =  String(results[indexPath.row].number) + " - " + results[indexPath.row].name.components(separatedBy: " ")[0] //removes everything after first space
-        do {
-            let data = try Data(contentsOf: URL(string: results[indexPath.row].imageUrl)!)
-            cell.pokemonImageView.image = UIImage(data: data)
+        cell.accessoryType = .disclosureIndicator
+        cell.pokemonLabel.text = results[indexPath.row].name.components(separatedBy: " ")[0] + "\n#" + String(results[indexPath.row].number)
+        let url = URL(string: results[indexPath.row].imageUrl)
+        if url != nil{
+            do {
+                let data = try Data(contentsOf: url!)
+                cell.pokemonImageView.image = UIImage(data: data)
+                
+            }
+            catch _{
+                print("Error getting image")
+            }
         }
-        catch _{
-            print("Error getting image")
+        else{
+            print("Broken URL for " + results[indexPath.row].name)
         }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("Tapped a row!")
     }
-
+    
 }
 
 
