@@ -13,6 +13,13 @@ class MainViewController: UIViewController {
     var searchBar: UITextField!
     var typeLabel: UILabel!
     var typesCollectionView: UICollectionView!
+    var attributesLabel: UILabel!
+    var attackLabel: UILabel!
+    var attackTextField: UITextField!
+    var defenseLabel: UILabel!
+    var defenseTextField: UITextField!
+    var healthLabel: UILabel!
+    var healthTextField: UITextField!
     var searchButton: UIButton!
     var randomButton: UIButton!
     
@@ -32,6 +39,10 @@ class MainViewController: UIViewController {
         createSearchTextField()
         createTypeLabel()
         createTypesGrid()
+        createAttributesLabel()
+        createAttackInputBar()
+        createDefenseInputBar()
+        createHealthInputBar()
         createSearchBar()
     }
     
@@ -80,11 +91,10 @@ class MainViewController: UIViewController {
     // MARK: Creation functions
     
     func createSearchTextField() {
-        searchBar = UITextField(frame: CGRect(x: 20, y: 75, width: view.frame.width - 40, height: 40))
+        searchBar = UITextField(frame: CGRect(x: 20, y: 80, width: view.frame.width - 40, height: 40))
         searchBar.layer.cornerRadius = 5
         searchBar.textColor = .black
         searchBar.borderStyle = .roundedRect
-        searchBar.layer.borderColor = UIColor.black.cgColor
         searchBar.placeholder = "Search"
         view.addSubview(searchBar)
     }
@@ -101,7 +111,7 @@ class MainViewController: UIViewController {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 0
-        typesCollectionView = UICollectionView(frame: CGRect(x: 20, y: typeLabel.frame.maxY + 10, width: view.frame.width - 40, height: 500), collectionViewLayout: layout)
+        typesCollectionView = UICollectionView(frame: CGRect(x: 20, y: typeLabel.frame.maxY + 10, width: view.frame.width - 40, height: 150), collectionViewLayout: layout)
         typesCollectionView.register(TypeCollectionViewCell.self, forCellWithReuseIdentifier: "typeCell")
         typesCollectionView.backgroundColor = .white
         typesCollectionView.delegate = self
@@ -110,7 +120,53 @@ class MainViewController: UIViewController {
     }
     
     func createAttributesLabel() {
+        attributesLabel = UILabel(frame: CGRect(x: 20, y: typesCollectionView.frame.maxY + 20, width: view.frame.width - 40, height: 40))
+        attributesLabel.text = "Attributes"
+        attributesLabel.font = UIFont.systemFont(ofSize: 30)
+        attributesLabel.textColor = .black
+        view.addSubview(attributesLabel)
+    }
+    
+    func createAttackInputBar() {
+        attackLabel = UILabel(frame: CGRect(x: 0, y: attributesLabel.frame.maxY + 10, width: view.frame.width, height: 50))
+        attackLabel.text = "  Minimum Attack"
+        attackLabel.backgroundColor = .red
+        attackLabel.textColor = .white
+        view.addSubview(attackLabel)
         
+        attackTextField = UITextField(frame: CGRect(x: view.frame.width - 80, y: attackLabel.frame.minY + 10, width: 70, height: 30))
+        attackTextField.backgroundColor = .white
+        attackTextField.borderStyle = .roundedRect
+        attackTextField.placeholder = "0-200"
+        view.addSubview(attackTextField)
+    }
+    
+    func createDefenseInputBar() {
+        defenseLabel = UILabel(frame: CGRect(x: 0, y: attackLabel.frame.maxY, width: view.frame.width, height: 50))
+        defenseLabel.text = "  Minimum Defense"
+        defenseLabel.backgroundColor = .blue
+        defenseLabel.textColor = .white
+        view.addSubview(defenseLabel)
+        
+        defenseTextField = UITextField(frame: CGRect(x: view.frame.width - 80, y: defenseLabel.frame.minY + 10, width: 70, height: 30))
+        defenseTextField.backgroundColor = .white
+        defenseTextField.borderStyle = .roundedRect
+        defenseTextField.placeholder = "0-200"
+        view.addSubview(defenseTextField)
+    }
+    
+    func createHealthInputBar() {
+        healthLabel = UILabel(frame: CGRect(x: 0, y: defenseLabel.frame.maxY, width: view.frame.width, height: 50))
+        healthLabel.text = "  Minimum Health Points"
+        healthLabel.backgroundColor = .green
+        healthLabel.textColor = .white
+        view.addSubview(healthLabel)
+        
+        healthTextField = UITextField(frame: CGRect(x: view.frame.width - 80, y: healthLabel.frame.minY + 10, width: 70, height: 30))
+        healthTextField.backgroundColor = .white
+        healthTextField.borderStyle = .roundedRect
+        healthTextField.placeholder = "0-200"
+        view.addSubview(healthTextField)
     }
     
     func createSearchBar() {
