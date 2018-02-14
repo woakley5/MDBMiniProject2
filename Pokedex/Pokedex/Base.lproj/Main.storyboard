@@ -24,7 +24,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="Z6j-i9-S9U"/>
                     <connections>
-                        <segue destination="ZYE-ce-dqW" kind="show" id="GjR-vR-5vc"/>
+                        <segue destination="ZYE-ce-dqW" kind="show" identifier="showResults" id="GjR-vR-5vc"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -45,7 +45,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>
                     <connections>
-                        <segue destination="PWH-JG-YXb" kind="show" id="PEQ-vS-YgE"/>
+                        <segue destination="PWH-JG-YXb" kind="show" identifier="showProfile" id="PEQ-vS-YgE"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iUZ-Uq-0jV" userLabel="First Responder" sceneMemberID="firstResponder"/>

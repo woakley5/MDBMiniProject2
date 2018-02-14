@@ -14,11 +14,12 @@ class ResultsViewController: UIViewController {
     var listView: UITableView!
     var switchSegementControl: UISegmentedControl!
     
-    var textInput: String = "Bulbasaur"
+    var textInput: String = "Pokemon"
     var types: [String] = ["Grass"]
     var minAttack: Int = 0
     var minHealth: Int = 0
     var minDefense: Int = 0
+    var random: Bool = false
     
     var results: [Pokemon] = []
     
@@ -26,18 +27,39 @@ class ResultsViewController: UIViewController {
         super.viewDidLoad()
         
         let layout = UICollectionViewFlowLayout()
-        layout.minimumLineSpacing = 0
-        layout.minimumInteritemSpacing = 0
+        layout.sectionInset = UIEdgeInsetsMake(5, 5, 5, 5)
         collectionView = UICollectionView(frame: view.frame, collectionViewLayout: layout)
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.backgroundColor = .white
-        collectionView.register(PokemonCollectionViewCell.self, forCellWithReuseIdentifier: "pokemonCell")
+        collectionView.register(PokemonCollectionViewCell.self, forCellWithReuseIdentifier: "pokemonCollectionCell")
         view.addSubview(collectionView)
+        
+        listView = UITableView(frame: view.frame)
+        listView.delegate = self
+        listView.dataSource = self
+        listView.register(PokemonTableViewCell.self, forCellReuseIdentifier: "pokemonTableCell")
+        
+        switchSegementControl = UISegmentedControl(items: ["Grid", "List"])
+        switchSegementControl.frame = CGRect(x: 0, y: 0, width: 200, height: 30)
+        switchSegementControl.addTarget(self, action: #selector(switchViewStyle), for: .valueChanged)
+        navigationItem.titleView = switchSegementControl
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        switchSegementControl.selectedSegmentIndex = 0
         searchForPokemon()
+    }
+    
+    @objc func switchViewStyle(){
+        if switchSegementControl.selectedSegmentIndex == 0{
+            collectionView.removeFromSuperview()
+            view.addSubview(listView)
+        }
+        else{
+            listView.removeFromSuperview()
+            view.addSubview(collectionView)
+        }
     }
     
     func searchForPokemon(){
@@ -51,7 +73,7 @@ class ResultsViewController: UIViewController {
             let typesMatch = typesSet.isSubset(of: pTypeSet)
             let rangesMatch = p.attack > minAttack && p.health > minHealth && p.defense > minDefense
             
-            if matchesStringInput && typesMatch && rangesMatch {
+            if matchesStringInput || ( typesMatch && rangesMatch ) {
                 results.append(p)
             }
             
@@ -62,7 +84,7 @@ class ResultsViewController: UIViewController {
     }
 }
 
-extension ResultsViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+extension ResultsViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -72,7 +94,7 @@ extension ResultsViewController: UICollectionViewDataSource, UICollectionViewDel
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "pokemonCell", for: indexPath) as! PokemonCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "pokemonCollectionCell", for: indexPath) as! PokemonCollectionViewCell
         for subview in cell.contentView.subviews {
             subview.removeFromSuperview()
         }
@@ -82,9 +104,10 @@ extension ResultsViewController: UICollectionViewDataSource, UICollectionViewDel
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        let cell = cell as! PokemonCollectionViewCell
+        cell.pokemonLabel.text =  String(results[indexPath.row].number) + " - " + results[indexPath.row].name.components(separatedBy: " ")[0] //removes everything after first space
         do {
             let data = try Data(contentsOf: URL(string: results[indexPath.row].imageUrl)!)
-            let cell = cell as! PokemonCollectionViewCell
             cell.pokemonImageView.image = UIImage(data: data)
         }
         catch _{
@@ -93,8 +116,34 @@ extension ResultsViewController: UICollectionViewDataSource, UICollectionViewDel
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 300, height: 200)
+        return CGSize(width: view.frame.width / 4 - 10, height: 80)
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print("Tapped " + String(indexPath.row))
+    }
+}
+
+extension ResultsViewController: UITableViewDelegate, UITableViewDataSource {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return results.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "pokemonTableCell", for: indexPath) as! PokemonCollectionViewCell
+        for subview in cell.contentView.subviews {
+            subview.removeFromSuperview()
+        }
+        cell.awakeFromNib()
+        
+        return cell
+    }
+    
+    
 }
 
 
