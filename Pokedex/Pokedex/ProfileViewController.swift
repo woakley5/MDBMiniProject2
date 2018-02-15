@@ -17,8 +17,9 @@ class ProfileViewController: UIViewController {
     var statsTableView: UITableView!
     var bioLabel: UILabel!
     var typeImages: [UIImageView] = []
-    var webButton: UIButton!
+    var favoriteButton: UIButton!
     var webView: WKWebView!
+    var isFavorite: Bool!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,17 +41,15 @@ class ProfileViewController: UIViewController {
         typesLabel.text = "Types:"
         view.addSubview(typesLabel)
         
-        webButton = UIButton(frame: CGRect(x: view.frame.width - view.frame.width/4 - 75, y: view.frame.height * 0.32, width: 150, height: 30))
-        webButton.setTitle("View Webpage", for: .normal)
-        webButton.setTitleColor(.blue, for: .normal)
-        webButton.addTarget(self, action: #selector(viewWebsiteTapped), for: .touchUpInside)
-        view.addSubview(webButton)
+        favoriteButton = UIButton(frame: CGRect(x: view.frame.width - view.frame.width/4 - 75, y: view.frame.height * 0.32, width: 150, height: 30))
+        favoriteButton.setTitleColor(.blue, for: .normal)
+        favoriteButton.addTarget(self, action: #selector(saveAsFavoriteButtonTapped), for: .touchUpInside)
+        view.addSubview(favoriteButton)
         
         statsTableView = UITableView(frame: CGRect(x: 0, y: view.frame.height/2, width: view.frame.width, height: view.frame.height/2))
         statsTableView.delegate = self
         statsTableView.dataSource = self
         view.addSubview(statsTableView)
-        
         statsTableView.register(StatTableViewCell.self, forCellReuseIdentifier: "statCell")
         
         let webConfiguration = WKWebViewConfiguration()
@@ -75,6 +74,23 @@ class ProfileViewController: UIViewController {
                 x = view.frame.width/2 + 60
                 y += 60
             }
+        }
+        
+        let  favArray = UserDefaults.standard.array(forKey: "favorites") as? Array<Int>
+        if favArray != nil { //array exists
+            if favArray!.contains(where: {$0 == pokemon.number}){
+                print("Already favorited")
+                isFavorite = true
+                favoriteButton.setTitle("Remove Favorite", for: .normal)
+            }
+            else{
+                isFavorite = false
+                favoriteButton.setTitle("Add as Favorite", for: .normal)
+            }
+        }
+        else{
+            favoriteButton.setTitle("Add as Favorite", for: .normal)
+            isFavorite = false
         }
     }
     
@@ -104,10 +120,34 @@ class ProfileViewController: UIViewController {
         }
     }
     
-    @objc func viewWebsiteTapped(){
-        let myURL = URL(string: "https://google.com/search?q=\(pokemon.name.lowercased())")
-        let request = URLRequest(url: myURL!)
-        //webView.load(request)
+    @objc func saveAsFavoriteButtonTapped(){
+        if isFavorite{
+            if let array = UserDefaults.standard.array(forKey: "favorites") { //array exists
+                var a = array as! Array<Int>
+                let index = a.index(of: pokemon.number)
+                a.remove(at: index!)
+                UserDefaults.standard.set(a, forKey: "favorites")
+            }
+            else{
+                let a = [pokemon.number]
+                UserDefaults.standard.set(a, forKey: "favorites")
+            }
+            favoriteButton.setTitle("Add as Favorite", for: .normal)
+            isFavorite = false
+        }
+        else{
+            if let array = UserDefaults.standard.array(forKey: "favorites") { //array exists
+                var a = array
+                a.append(pokemon.number)
+                UserDefaults.standard.set(a, forKey: "favorites")
+            }
+            else{
+                let a = [pokemon.number]
+                UserDefaults.standard.set(a, forKey: "favorites")
+            }
+            isFavorite = true
+            favoriteButton.setTitle("Remove Favorite", for: .normal)
+        }
     }
 }
 
