@@ -37,6 +37,7 @@ class Pokemon {
     let types: [String]
     let imageUrl: String!
     let stats: [Int]!
+    let statNames = ["Attack", "Defense", "Health", "Special Attack", "Special Defense", "Total"]
     
     init(name: String, number: Int, attack: Int, defense: Int, health: Int, spAttack: Int, spDef: Int, species: String, speed: Int, total: Int, types: [String]) {
         self.name = name
