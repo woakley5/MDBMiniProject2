@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import WebKit
 
 class ProfileViewController: UIViewController {
 
@@ -14,15 +15,36 @@ class ProfileViewController: UIViewController {
     
     var imageView: UIImageView!
     var statsTableView: UITableView!
+    var bioLabel: UILabel!
+    var typeImages: [UIImageView] = []
+    var webButton: UIButton!
+    var webView: WKWebView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let imageDimension = view.frame.width * 0.4
+        let imageDimension = view.frame.width * 0.32
         let buffer = view.frame.width/2 - imageDimension/2
-        imageView = UIImageView(frame: CGRect(x: buffer, y: buffer, width: imageDimension, height: imageDimension))
+        imageView = UIImageView(frame: CGRect(x: 40, y: buffer, width: imageDimension, height: imageDimension))
         imageView.contentMode = .scaleAspectFit
         view.addSubview(imageView)
+        
+        let circle = UIView(frame: CGRect(x: 15, y: buffer - 25, width: imageDimension + 50, height: imageDimension + 50))
+        circle.backgroundColor = UIColor.clear
+        circle.layer.cornerRadius = (imageDimension + 50)/2
+        circle.layer.borderColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)
+        circle.layer.borderWidth = 7
+        view.addSubview(circle)
+        
+        let typesLabel = UILabel(frame: CGRect(x: view.frame.width/2 + 10, y: view.frame.height * 0.18 - 30, width: 100, height: 20))
+        typesLabel.text = "Types:"
+        view.addSubview(typesLabel)
+        
+        webButton = UIButton(frame: CGRect(x: view.frame.width - view.frame.width/4 - 75, y: view.frame.height * 0.32, width: 150, height: 30))
+        webButton.setTitle("View Webpage", for: .normal)
+        webButton.setTitleColor(.blue, for: .normal)
+        webButton.addTarget(self, action: #selector(viewWebsiteTapped), for: .touchUpInside)
+        view.addSubview(webButton)
         
         statsTableView = UITableView(frame: CGRect(x: 0, y: view.frame.height/2, width: view.frame.width, height: view.frame.height/2))
         statsTableView.delegate = self
@@ -30,7 +52,9 @@ class ProfileViewController: UIViewController {
         view.addSubview(statsTableView)
         
         statsTableView.register(StatTableViewCell.self, forCellReuseIdentifier: "statCell")
-
+        
+        let webConfiguration = WKWebViewConfiguration()
+        webView = WKWebView(frame: .zero, configuration: webConfiguration)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -38,6 +62,27 @@ class ProfileViewController: UIViewController {
         self.navigationItem.title = pokemon.name
         imageView.image = ProfileViewController.getImageForPokemon(p: pokemon)
         statsTableView.reloadData()
+        
+        var x = view.frame.width/2 + 10
+        var y = view.frame.height * 0.18
+        for (i, p) in pokemon.types.enumerated() {
+            let image = UIImageView(frame: CGRect(x: x, y: y, width: 50, height: 50))
+            image.image = UIImage(named: p.lowercased())
+            view.addSubview(image)
+            typeImages.append(image)
+            x = x + 50
+            if i % 3 == 0 && i > 0 {
+                x = view.frame.width/2 + 60
+                y += 60
+            }
+        }
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        for p in typeImages{
+            p.removeFromSuperview()
+        }
+        typeImages.removeAll()
     }
     
     static func getImageForPokemon(p: Pokemon!) -> UIImage { //not really the best place to put this but we can move later
@@ -57,6 +102,12 @@ class ProfileViewController: UIViewController {
             print("Broken URL for " + p.name)
             return UIImage(named: "pokeball")!
         }
+    }
+    
+    @objc func viewWebsiteTapped(){
+        let myURL = URL(string: "https://google.com/search?q=\(pokemon.name.lowercased())")
+        let request = URLRequest(url: myURL!)
+        //webView.load(request)
     }
 }
 
