@@ -36,6 +36,7 @@ class Pokemon {
     let total: Int!
     let types: [String]
     let imageUrl: String!
+    let stats: [Int]!
     
     init(name: String, number: Int, attack: Int, defense: Int, health: Int, spAttack: Int, spDef: Int, species: String, speed: Int, total: Int, types: [String]) {
         self.name = name
@@ -50,6 +51,7 @@ class Pokemon {
         self.total = total
         self.types = types
         self.imageUrl = "http://img.pokemondb.net/artwork/\(name.components(separatedBy: " ")[0].lowercased()).jpg"
+        self.stats = [self.attack, self.defense, self.health, self.specialAttack, self.specialDefense, self.total]
     }
     
 }

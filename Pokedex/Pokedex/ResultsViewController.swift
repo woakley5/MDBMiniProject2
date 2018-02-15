@@ -23,11 +23,16 @@ class ResultsViewController: UIViewController {
     
     var results: [Pokemon] = []
     var pokemon: [Pokemon] = []
+    var selectedPokemon: Pokemon!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         navigationItem.title = "Search Results"
+        let backItem = UIBarButtonItem()
+        backItem.title = ""
+        navigationItem.backBarButtonItem = backItem
+        
         let layout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsetsMake(5, 5, 5, 5)
         collectionView = UICollectionView(frame: view.frame, collectionViewLayout: layout)
@@ -36,6 +41,7 @@ class ResultsViewController: UIViewController {
         collectionView.backgroundColor = .white
         collectionView.register(PokemonCollectionViewCell.self, forCellWithReuseIdentifier: "pokemonCollectionCell")
         //view.addSubview(collectionView)
+        
         
         listView = UITableView(frame: view.frame)
         listView.delegate = self
@@ -104,6 +110,13 @@ class ResultsViewController: UIViewController {
         listView.reloadData()
         collectionView.reloadData()
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.destination is ProfileViewController{
+            let d = segue.destination as! ProfileViewController
+            d.pokemon = selectedPokemon
+        }
+    }
 }
 
 //COLLECTION VIEW EXTENSION
@@ -128,23 +141,9 @@ extension ResultsViewController: UICollectionViewDataSource, UICollectionViewDel
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let cell = cell as! PokemonCollectionViewCell
-        let p = results[indexPath.row]
-        cell.pokemonLabel.text = String(p.number) + " " + p.name
-//        cell.pokemonLabel.text =  String(results[indexPath.row].number) + " - " + results[indexPath.row].name.components(separatedBy: " ")[0] //removes everything after first space
-        let url = URL(string: p.imageUrl)
-        if url != nil{
-            do {
-                let data = try Data(contentsOf: url!)
-                cell.pokemonImageView.image = UIImage(data: data)
-                
-            }
-            catch _{
-                print("Error getting image")
-            }
-        }
-        else{
-            print("Broken URL for " + p.name)
-        }
+        cell.pokemonLabel.text =  String(results[indexPath.row].number) + " - " + results[indexPath.row].name.components(separatedBy: " ")[0] //removes everything after first space
+        cell.pokemonImageView.image = ProfileViewController.getImageForPokemon(p: results[indexPath.row]) //static in ProfileViewController
+
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -152,7 +151,8 @@ extension ResultsViewController: UICollectionViewDataSource, UICollectionViewDel
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("Tapped " + String(indexPath.row))
+        selectedPokemon = results[indexPath.row]
+        self.performSegue(withIdentifier: "showProfile", sender: self)
     }
 }
 
@@ -184,6 +184,7 @@ extension ResultsViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let cell = cell as! PokemonTableViewCell
         cell.accessoryType = .disclosureIndicator
+        cell.pokemonImageView.image = ProfileViewController.getImageForPokemon(p: results[indexPath.row]) //static in ProfileViewController
         let p = results[indexPath.row]
         if p.name.contains("(") {
             let startIndex = p.name.index(of: "(")!
@@ -199,27 +200,13 @@ extension ResultsViewController: UITableViewDelegate, UITableViewDataSource {
         } else {
             cell.pokemonLabel.text = "#" + String(p.number) + " " + p.name + "\n" + p.species
         }
-//        cell.pokemonLabel.text = results[indexPath.row].name.components(separatedBy: " ")[0] + "\n#" + String(results[indexPath.row].number)
-        let url = URL(string: p.imageUrl)
-        if url != nil{
-            do {
-                let data = try Data(contentsOf: url!)
-                cell.pokemonImageView.image = UIImage(data: data)
-                
-            }
-            catch _{
-                print("Error getting image")
-            }
-        }
-        else{
-            print("Broken URL for " + p.name)
-        }
+
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("Tapped a row!")
+        selectedPokemon = results[indexPath.row]
+        self.performSegue(withIdentifier: "showProfile", sender: self)
     }
-    
 }
 
 
