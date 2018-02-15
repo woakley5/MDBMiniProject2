@@ -53,15 +53,14 @@ class ResultsViewController: UIViewController {
         switchSegementControl.frame = CGRect(x: 0, y: 0, width: 200, height: 30)
         switchSegementControl.addTarget(self, action: #selector(switchViewStyle), for: .valueChanged)
         navigationItem.titleView = switchSegementControl
-        
+        switchSegementControl.selectedSegmentIndex = 0
+
         searchForPokemon()
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        switchSegementControl.selectedSegmentIndex = 0
         print(textInput)
         print(types)
-//        searchForPokemon()
     }
     
     @objc func switchViewStyle(){
@@ -115,6 +114,10 @@ class ResultsViewController: UIViewController {
         if segue.destination is ProfileViewController{
             let d = segue.destination as! ProfileViewController
             d.pokemon = selectedPokemon
+            
+            if let index = listView.indexPathForSelectedRow {
+                listView.deselectRow(at: index, animated: false)
+            }
         }
     }
 }
@@ -141,7 +144,9 @@ extension ResultsViewController: UICollectionViewDataSource, UICollectionViewDel
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let cell = cell as! PokemonCollectionViewCell
-        cell.pokemonLabel.text =  String(results[indexPath.row].number) + " - " + results[indexPath.row].name.components(separatedBy: " ")[0] //removes everything after first space
+        let p = results[indexPath.row]
+//        cell.pokemonLabel.text =  String(results[indexPath.row].number) + " - " + results[indexPath.row].name.components(separatedBy: " ")[0] //removes everything after first space
+        cell.pokemonLabel.text = "#" + String(p.number) + " " + p.name
         cell.pokemonImageView.image = ProfileViewController.getImageForPokemon(p: results[indexPath.row]) //static in ProfileViewController
 
     }
@@ -196,9 +201,23 @@ extension ResultsViewController: UITableViewDelegate, UITableViewDataSource {
             name?.removeFirst(2)
             name?.removeLast(2)
             name = name?.replacingOccurrences(of: "  ", with: " ")
-            cell.pokemonLabel.text = "#" + String(p.number) + " " + name! + "\n" + p.species
+            cell.pokemonLabel.text = "#" + String(p.number) + " " + name!
+            cell.pokemonLabel.numberOfLines = 1
         } else {
-            cell.pokemonLabel.text = "#" + String(p.number) + " " + p.name + "\n" + p.species
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineSpacing = 7
+            let text = "#" + String(p.number) + " " + p.name + "\n" + p.species
+            let attrString = NSMutableAttributedString(string: text)
+            attrString.addAttribute(NSParagraphStyleAttributeName, value: paragraphStyle, range: NSMakeRange(0, attrString.length))
+            
+            cell.pokemonLabel.attributedText = attrString
+            
+//            cell.pokemonLabel.text = "#" + String(p.number) + " " + p.name + "\n" + p.species
+        }
+        cell.pokemonTypeImageViewOne.image = UIImage(named: String(p.types[0]).lowercased())
+        
+        if p.types.count == 2 {
+            cell.pokemonTypeImageViewTwo.image = UIImage(named: String(p.types[1]).lowercased())
         }
 
     }

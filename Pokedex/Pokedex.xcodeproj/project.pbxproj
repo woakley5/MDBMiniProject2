@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		192CFF7A20341E4200E24E18 /* PokemonCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192CFF7920341E4200E24E18 /* PokemonCollectionViewCell.swift */; };
 		192CFF7C20341E7300E24E18 /* PokemonTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192CFF7B20341E7200E24E18 /* PokemonTableViewCell.swift */; };
+		196C701F20357AEA003499FF /* FavoritesCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 196C701E20357AEA003499FF /* FavoritesCollectionViewCell.swift */; };
+		196C702F2035941C003499FF /* Pokemon Hollow.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 196C702E2035941B003499FF /* Pokemon Hollow.ttf */; };
+		196C703120359420003499FF /* Pokemon Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 196C703020359420003499FF /* Pokemon Solid.ttf */; };
+		196C70362035947D003499FF /* Pokemon GB.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 196C70352035947D003499FF /* Pokemon GB.ttf */; };
 		3CFC6F0F1D98716000B4EBB5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFC6F0E1D98716000B4EBB5 /* AppDelegate.swift */; };
 		3CFC6F111D98716000B4EBB5 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFC6F101D98716000B4EBB5 /* MainViewController.swift */; };
 		3CFC6F141D98716000B4EBB5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CFC6F121D98716000B4EBB5 /* Main.storyboard */; };
@@ -44,6 +48,10 @@
 /* Begin PBXFileReference section */
 		192CFF7920341E4200E24E18 /* PokemonCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PokemonCollectionViewCell.swift; sourceTree = "<group>"; };
 		192CFF7B20341E7200E24E18 /* PokemonTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PokemonTableViewCell.swift; sourceTree = "<group>"; };
+		196C701E20357AEA003499FF /* FavoritesCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesCollectionViewCell.swift; sourceTree = "<group>"; };
+		196C702E2035941B003499FF /* Pokemon Hollow.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pokemon Hollow.ttf"; sourceTree = "<group>"; };
+		196C703020359420003499FF /* Pokemon Solid.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pokemon Solid.ttf"; sourceTree = "<group>"; };
+		196C70352035947D003499FF /* Pokemon GB.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pokemon GB.ttf"; sourceTree = "<group>"; };
 		3CFC6F0B1D98716000B4EBB5 /* Pokedex.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pokedex.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CFC6F0E1D98716000B4EBB5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3CFC6F101D98716000B4EBB5 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -90,6 +98,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		196C70342035945A003499FF /* PokemonFonts */ = {
+			isa = PBXGroup;
+			children = (
+				196C70352035947D003499FF /* Pokemon GB.ttf */,
+				196C703020359420003499FF /* Pokemon Solid.ttf */,
+				196C702E2035941B003499FF /* Pokemon Hollow.ttf */,
+			);
+			path = PokemonFonts;
+			sourceTree = "<group>";
+		};
 		3CFC6F021D98716000B4EBB5 = {
 			isa = PBXGroup;
 			children = (
@@ -113,6 +131,7 @@
 		3CFC6F0D1D98716000B4EBB5 /* Pokedex */ = {
 			isa = PBXGroup;
 			children = (
+				196C70342035945A003499FF /* PokemonFonts */,
 				3CFC6F3C1D98719100B4EBB5 /* pokeData.json */,
 				3CFC6F0E1D98716000B4EBB5 /* AppDelegate.swift */,
 				3CFC6F101D98716000B4EBB5 /* MainViewController.swift */,
@@ -121,6 +140,7 @@
 				192CFF7B20341E7200E24E18 /* PokemonTableViewCell.swift */,
 				192CFF7920341E4200E24E18 /* PokemonCollectionViewCell.swift */,
 				6C941F7A2034DB5F009A81B0 /* TypeCollectionViewCell.swift */,
+				196C701E20357AEA003499FF /* FavoritesCollectionViewCell.swift */,
 				3CFC6F121D98716000B4EBB5 /* Main.storyboard */,
 				3CFC6F151D98716000B4EBB5 /* Assets.xcassets */,
 				3CFC6F171D98716000B4EBB5 /* LaunchScreen.storyboard */,
@@ -217,7 +237,7 @@
 				TargetAttributes = {
 					3CFC6F0A1D98716000B4EBB5 = {
 						CreatedOnToolsVersion = 8.0;
-						DevelopmentTeam = 7E67TG786L;
+						DevelopmentTeam = 62MULBSYG7;
 						ProvisioningStyle = Automatic;
 					};
 					3CFC6F1E1D98716000B4EBB5 = {
@@ -261,6 +281,9 @@
 				3CFC6F161D98716000B4EBB5 /* Assets.xcassets in Resources */,
 				3CFC6F3D1D98719100B4EBB5 /* pokeData.json in Resources */,
 				3CFC6F141D98716000B4EBB5 /* Main.storyboard in Resources */,
+				196C70362035947D003499FF /* Pokemon GB.ttf in Resources */,
+				196C702F2035941C003499FF /* Pokemon Hollow.ttf in Resources */,
+				196C703120359420003499FF /* Pokemon Solid.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -293,6 +316,7 @@
 				3CFC6F411D9871FC00B4EBB5 /* PokemonGenerator.swift in Sources */,
 				3CFC6F0F1D98716000B4EBB5 /* AppDelegate.swift in Sources */,
 				6C50CD0E2033E2D6009ECE6E /* ResultsViewController.swift in Sources */,
+				196C701F20357AEA003499FF /* FavoritesCollectionViewCell.swift in Sources */,
 				3CFC6F3F1D9871F100B4EBB5 /* Pokemon.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -445,10 +469,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 7E67TG786L;
+				DEVELOPMENT_TEAM = 62MULBSYG7;
 				INFOPLIST_FILE = Pokedex/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = org.mdb.Pokedex;
+				PRODUCT_BUNDLE_IDENTIFIER = org.mdb.Pokedex1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};
@@ -458,10 +482,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 7E67TG786L;
+				DEVELOPMENT_TEAM = 62MULBSYG7;
 				INFOPLIST_FILE = Pokedex/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = org.mdb.Pokedex;
+				PRODUCT_BUNDLE_IDENTIFIER = org.mdb.Pokedex1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};

@@ -23,7 +23,8 @@ class PokemonCollectionViewCell: UICollectionViewCell {
         
         pokemonLabel = UILabel(frame: CGRect(x: 0, y: contentView.frame.height - 15, width: contentView.frame.width, height: 15))
         pokemonLabel.textAlignment = .center
-        pokemonLabel.font = UIFont(name: "Helvetica", size: 10)
+//        pokemonLabel.font = UIFont(name: "Helvetica", size: 10)
+        pokemonLabel.font = UIFont(name: "Pokemon GB", size: 7)
         contentView.addSubview(pokemonLabel)
     }
     
