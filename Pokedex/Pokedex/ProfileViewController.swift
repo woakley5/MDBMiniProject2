@@ -25,7 +25,12 @@ class ProfileViewController: UIViewController {
         view.addSubview(imageView)
         
         statsTableView = UITableView(frame: CGRect(x: 0, y: view.frame.height/2, width: view.frame.width, height: view.frame.height/2))
+        statsTableView.delegate = self
+        statsTableView.dataSource = self
         view.addSubview(statsTableView)
+        
+        statsTableView.register(StatTableViewCell.self, forCellReuseIdentifier: "statCell")
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -56,10 +61,20 @@ class ProfileViewController: UIViewController {
 }
 
 extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: UITableViewCellStyle.value1, reuseIdentifier: "statCell")
-        cell.textLabel?.text = "Stat " + String(indexPath.row)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "statCell", for: indexPath) as! StatTableViewCell
+        for subview in cell.contentView.subviews {
+            subview.removeFromSuperview()
+        }
+        cell.awakeFromNib()
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let c = cell as! StatTableViewCell
+        c.statNameLabel.text = pokemon.statNames[indexPath.row]
+        c.statValueLabel.text = String(pokemon.stats[indexPath.row])
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
