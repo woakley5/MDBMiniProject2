@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import WebKit
 
 class ProfileViewController: UIViewController {
 
@@ -18,11 +17,16 @@ class ProfileViewController: UIViewController {
     var bioLabel: UILabel!
     var typeImages: [UIImageView] = []
     var favoriteButton: UIButton!
-    var webView: WKWebView!
     var isFavorite: Bool!
+    var showWebsiteButton: UIBarButtonItem!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let webButton = UIButton(type: .detailDisclosure)
+        webButton.addTarget(self, action: #selector(showWebsite), for: .touchUpInside)
+        showWebsiteButton = UIBarButtonItem(customView: webButton)
+        navigationItem.rightBarButtonItem = showWebsiteButton
         
         let imageDimension = view.frame.width * 0.32
         let buffer = view.frame.width/2 - imageDimension/2
@@ -51,9 +55,6 @@ class ProfileViewController: UIViewController {
         statsTableView.dataSource = self
         view.addSubview(statsTableView)
         statsTableView.register(StatTableViewCell.self, forCellReuseIdentifier: "statCell")
-        
-        let webConfiguration = WKWebViewConfiguration()
-        webView = WKWebView(frame: .zero, configuration: webConfiguration)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -147,6 +148,13 @@ class ProfileViewController: UIViewController {
             }
             isFavorite = true
             favoriteButton.setTitle("Remove Favorite", for: .normal)
+        }
+    }
+    
+    @objc func showWebsite(){
+        if let link = URL(string: "https://google.com/search?q=\(pokemon.name.lowercased())") {
+            print("Opening URL")
+            UIApplication.shared.open(link)
         }
     }
 }

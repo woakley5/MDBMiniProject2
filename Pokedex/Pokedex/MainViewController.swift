@@ -81,6 +81,9 @@ class MainViewController: UIViewController, UITextFieldDelegate {
             let cell = typesCollectionView.cellForItem(at: indexPath) as! TypeCollectionViewCell
             cell.toggleSelected(false)
         }
+        favoritesCollectionView.reloadData()
+        print("Favorites Array:")
+        print(UserDefaults.standard.array(forKey: "favorites"))
     }
 
     override func didReceiveMemoryWarning() {
@@ -326,7 +329,7 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
                 print(array.count)
                 return array.count
             }
-            return 10
+            return 0 //was 10, dont know why
         }
     }
     
@@ -356,7 +359,7 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
             if let array = UserDefaults.standard.array(forKey: "favorites") {
                 let i = array[indexPath.item] as! Int
                 favCell.pokemon = pokemon[i]
-                favCell.imageView.image = UIImage(named: pokemon[i].imageUrl)
+                favCell.imageView.image = ProfileViewController.getImageForPokemon(p: pokemon[i])
             } else {
                 favCell.pokemon = pokemon[indexPath.item]
                 favCell.imageView.image = ProfileViewController.getImageForPokemon(p: pokemon[indexPath.item])
