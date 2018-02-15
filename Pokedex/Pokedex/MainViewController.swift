@@ -119,15 +119,14 @@ class MainViewController: UIViewController, UITextFieldDelegate {
     
     @objc func addGestureRecognizer(sender: UITextField) {
         print("tapped")
-        tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        view.addGestureRecognizer(tap)
         
-//        let hidden = view.frame.height - sender.frame.maxY - 226.0
-//        if hidden < 0 && view.frame.origin.y == 0.0 {
-//            slideViewUp(hidden)
-//        }
         if sender != searchBar && view.frame.origin.y == 0.0 {
             slideViewUp()
+            tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+            view.addGestureRecognizer(tap)
+        } else if sender == searchBar {
+            tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+            view.addGestureRecognizer(tap)
         }
     }
     

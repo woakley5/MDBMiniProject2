@@ -35,58 +35,73 @@ class ResultsViewController: UIViewController {
         collectionView.delegate = self
         collectionView.backgroundColor = .white
         collectionView.register(PokemonCollectionViewCell.self, forCellWithReuseIdentifier: "pokemonCollectionCell")
-        view.addSubview(collectionView)
+        //view.addSubview(collectionView)
         
         listView = UITableView(frame: view.frame)
         listView.delegate = self
         listView.dataSource = self
         listView.register(PokemonTableViewCell.self, forCellReuseIdentifier: "pokemonTableCell")
+        view.addSubview(listView)
         
-        switchSegementControl = UISegmentedControl(items: ["Grid", "List"])
+        switchSegementControl = UISegmentedControl(items: ["List", "Grid"])
         switchSegementControl.frame = CGRect(x: 0, y: 0, width: 200, height: 30)
         switchSegementControl.addTarget(self, action: #selector(switchViewStyle), for: .valueChanged)
         navigationItem.titleView = switchSegementControl
+        
+        searchForPokemon()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         switchSegementControl.selectedSegmentIndex = 0
         print(textInput)
         print(types)
-        searchForPokemon()
+//        searchForPokemon()
     }
     
     @objc func switchViewStyle(){
         if switchSegementControl.selectedSegmentIndex == 1{
-            collectionView.removeFromSuperview()
-            view.addSubview(listView)
-        }
-        else{
             listView.removeFromSuperview()
             view.addSubview(collectionView)
+        }
+        else{
+            
+            collectionView.removeFromSuperview()
+            view.addSubview(listView)
         }
     }
     
     func searchForPokemon(){
-//        let pokemon = PokemonGenerator.getPokemonArray()
-        let typesSet = Set(types)
         results.removeAll()
+        if random {
+            var added: [Int] = []
+            while results.count != 20 {
+                let i = Int(arc4random_uniform(UInt32(pokemon.count)))
+                if !added.contains(i) {
+                    results.append(pokemon[i])
+                    added.append(i)
+                }
+            }
+        } else {
+            let typesSet = Set(types)
+//            results.removeAll()
 
-        for p in pokemon{
-            let pTypeSet = Set(p.types as [String])
-            let matchesStringInput = (p.name.lowercased().hasPrefix(textInput.lowercased()) || String(p.number) == textInput)
-            var typesMatch = true
-            if types.count != 0 {
-                typesMatch = typesSet.isSubset(of: pTypeSet)
+            for p in pokemon{
+                let pTypeSet = Set(p.types as [String])
+                let matchesStringInput = (p.name.lowercased().hasPrefix(textInput.lowercased()) || String(p.number) == textInput)
+                var typesMatch = true
+                if types.count != 0 {
+                    typesMatch = typesSet.isSubset(of: pTypeSet)
+                }
+                let rangesMatch = p.attack > minAttack && p.health > minHealth && p.defense > minDefense
+                if (textInput.count != 0 && matchesStringInput && ( typesMatch && rangesMatch )) || (textInput.count == 0 && ( typesMatch && rangesMatch ) ) {
+                    results.append(p)
+                }
+                
             }
-            let rangesMatch = p.attack > minAttack && p.health > minHealth && p.defense > minDefense
-            
-            if (textInput.count != 0 && matchesStringInput && ( typesMatch && rangesMatch )) || (textInput.count == 0 && ( typesMatch && rangesMatch ) ) {
-                results.append(p)
-            }
-            
         }
-        print("Returned " + String(results.count) + " Pokemon")
         
+        print("Returned " + String(results.count) + " Pokemon")
+        listView.reloadData()
         collectionView.reloadData()
     }
 }
@@ -113,8 +128,10 @@ extension ResultsViewController: UICollectionViewDataSource, UICollectionViewDel
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let cell = cell as! PokemonCollectionViewCell
-        cell.pokemonLabel.text =  String(results[indexPath.row].number) + " - " + results[indexPath.row].name.components(separatedBy: " ")[0] //removes everything after first space
-        let url = URL(string: results[indexPath.row].imageUrl)
+        let p = results[indexPath.row]
+        cell.pokemonLabel.text = String(p.number) + " " + p.name
+//        cell.pokemonLabel.text =  String(results[indexPath.row].number) + " - " + results[indexPath.row].name.components(separatedBy: " ")[0] //removes everything after first space
+        let url = URL(string: p.imageUrl)
         if url != nil{
             do {
                 let data = try Data(contentsOf: url!)
@@ -126,7 +143,7 @@ extension ResultsViewController: UICollectionViewDataSource, UICollectionViewDel
             }
         }
         else{
-            print("Broken URL for " + results[indexPath.row].name)
+            print("Broken URL for " + p.name)
         }
     }
     
@@ -167,8 +184,23 @@ extension ResultsViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let cell = cell as! PokemonTableViewCell
         cell.accessoryType = .disclosureIndicator
-        cell.pokemonLabel.text = results[indexPath.row].name.components(separatedBy: " ")[0] + "\n#" + String(results[indexPath.row].number)
-        let url = URL(string: results[indexPath.row].imageUrl)
+        let p = results[indexPath.row]
+        if p.name.contains("(") {
+            let startIndex = p.name.index(of: "(")!
+            let endIndex = p.name.index(of: ")")!
+//            let startInt = Int(p.name.distance(from: p.name.startIndex, to: startIndex))
+//            let endInt = Int(p.name.distance(from: p.name.startIndex, to: endIndex))
+//            let name = String(p.name[startInt...endInt])
+            var name = String(p.name[startIndex...endIndex])
+            name?.removeFirst(2)
+            name?.removeLast(2)
+            name = name?.replacingOccurrences(of: "  ", with: " ")
+            cell.pokemonLabel.text = "#" + String(p.number) + " " + name! + "\n" + p.species
+        } else {
+            cell.pokemonLabel.text = "#" + String(p.number) + " " + p.name + "\n" + p.species
+        }
+//        cell.pokemonLabel.text = results[indexPath.row].name.components(separatedBy: " ")[0] + "\n#" + String(results[indexPath.row].number)
+        let url = URL(string: p.imageUrl)
         if url != nil{
             do {
                 let data = try Data(contentsOf: url!)
@@ -180,7 +212,7 @@ extension ResultsViewController: UITableViewDelegate, UITableViewDataSource {
             }
         }
         else{
-            print("Broken URL for " + results[indexPath.row].name)
+            print("Broken URL for " + p.name)
         }
     }
     
