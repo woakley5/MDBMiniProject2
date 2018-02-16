@@ -15,7 +15,6 @@ class ProfileViewController: UIViewController {
     var imageView: UIImageView!
     var statsTableView: UITableView!
     var typeImages: [UIImageView] = []
-    //var isFavorite: Bool!
     var showWebsiteButton: UIBarButtonItem!
     var favoriteSwitch: UISwitch!
     var favoriteLabel: UILabel!
@@ -23,47 +22,12 @@ class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let webButton = UIButton(type: .detailDisclosure)
-        webButton.addTarget(self, action: #selector(showWebsite), for: .touchUpInside)
-        showWebsiteButton = UIBarButtonItem(customView: webButton)
-        navigationItem.rightBarButtonItem = showWebsiteButton
-        
-        let imageDimension = view.frame.width * 0.32
-        let buffer = view.frame.width/2 - imageDimension/2
-        imageView = UIImageView(frame: CGRect(x: 40, y: buffer, width: imageDimension, height: imageDimension))
-        imageView.contentMode = .scaleAspectFit
-        view.addSubview(imageView)
-        
-        let circle = UIView(frame: CGRect(x: 15, y: buffer - 25, width: imageDimension + 50, height: imageDimension + 50))
-        circle.backgroundColor = UIColor.clear
-        circle.layer.cornerRadius = (imageDimension + 50)/2
-        circle.layer.borderColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)
-        circle.layer.borderWidth = 7
-        view.addSubview(circle)
-        
-        let typesLabel = UILabel(frame: CGRect(x: view.frame.width/2 + 10, y: view.frame.height * 0.18 - 30, width: 100, height: 20))
-        typesLabel.font = UIFont(name: "Pokemon GB", size: 16)
-        typesLabel.text = "Types:"
-        view.addSubview(typesLabel)
-        
-        favoriteLabel = UILabel(frame: CGRect(x: view.frame.width - view.frame.width/4 - 75, y: view.frame.height * 0.32, width: 150, height: 30))
-        favoriteLabel.textAlignment = .left
-        favoriteLabel.font = UIFont(name: "Pokemon GB", size: 11)
-        favoriteLabel.text = "Set Favorite:"
-        view.addSubview(favoriteLabel)
-        
-        favoriteSwitch = UISwitch(frame: CGRect(x: view.frame.width - view.frame.width/4 - 75, y: view.frame.height * 0.38, width: 150, height: 30))
-        favoriteSwitch.addTarget(self, action: #selector(favoriteSwitchChanged), for: .valueChanged)
-        favoriteSwitch.onTintColor = .red
-        view.addSubview(favoriteSwitch)
-        
-        statsTableView = UITableView(frame: CGRect(x: 0, y: view.frame.height/2, width: view.frame.width, height: view.frame.height/2))
-        statsTableView.delegate = self
-        statsTableView.dataSource = self
-        statsTableView.isScrollEnabled = false
-        statsTableView.allowsSelection = false
-        view.addSubview(statsTableView)
-        statsTableView.register(StatTableViewCell.self, forCellReuseIdentifier: "statCell")
+        createWebButton()
+        createImageView()
+        createTypesLabel()
+        createFavoritesLabel()
+        createFavoriteSwitch()
+        createStatsTableView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -174,6 +138,62 @@ class ProfileViewController: UIViewController {
             print("Opening URL")
             UIApplication.shared.open(link)
         }
+    }
+    
+    // MARK: Creation functions
+    
+    func createWebButton() {
+        let webButton = UIButton(type: .detailDisclosure)
+        webButton.addTarget(self, action: #selector(showWebsite), for: .touchUpInside)
+        showWebsiteButton = UIBarButtonItem(customView: webButton)
+        navigationItem.rightBarButtonItem = showWebsiteButton
+    }
+    
+    func createImageView() {
+        let imageDimension = view.frame.width * 0.32
+        let buffer = view.frame.width/2 - imageDimension/2
+        imageView = UIImageView(frame: CGRect(x: 40, y: buffer, width: imageDimension, height: imageDimension))
+        imageView.contentMode = .scaleAspectFit
+        view.addSubview(imageView)
+
+        let circle = UIView(frame: CGRect(x: 15, y: buffer - 25, width: imageDimension + 50, height: imageDimension + 50))
+        circle.backgroundColor = UIColor.clear
+        circle.layer.cornerRadius = (imageDimension + 50)/2
+        circle.layer.borderColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)
+        circle.layer.borderWidth = 7
+        view.addSubview(circle)
+    }
+    
+    func createTypesLabel() {
+        let typesLabel = UILabel(frame: CGRect(x: view.frame.width/2 + 10, y: view.frame.height * 0.18 - 30, width: 100, height: 20))
+        typesLabel.font = UIFont(name: "Pokemon GB", size: 16)
+        typesLabel.text = "Types:"
+        view.addSubview(typesLabel)
+    }
+    
+    func createFavoritesLabel() {
+        favoriteLabel = UILabel(frame: CGRect(x: view.frame.width - view.frame.width/4 - 75, y: view.frame.height * 0.32, width: 150, height: 30))
+        favoriteLabel.textAlignment = .left
+        favoriteLabel.font = UIFont(name: "Pokemon GB", size: 11)
+        favoriteLabel.text = "Set Favorite:"
+        view.addSubview(favoriteLabel)
+    }
+    
+    func createFavoriteSwitch() {
+        favoriteSwitch = UISwitch(frame: CGRect(x: view.frame.width - view.frame.width/4 - 75, y: view.frame.height * 0.38, width: 150, height: 30))
+        favoriteSwitch.addTarget(self, action: #selector(favoriteSwitchChanged), for: .valueChanged)
+        favoriteSwitch.onTintColor = .red
+        view.addSubview(favoriteSwitch)
+    }
+    
+    func createStatsTableView() {
+        statsTableView = UITableView(frame: CGRect(x: 0, y: view.frame.height/2, width: view.frame.width, height: view.frame.height/2))
+        statsTableView.delegate = self
+        statsTableView.dataSource = self
+        statsTableView.isScrollEnabled = false
+        statsTableView.allowsSelection = false
+        view.addSubview(statsTableView)
+        statsTableView.register(StatTableViewCell.self, forCellReuseIdentifier: "statCell")
     }
 }
 

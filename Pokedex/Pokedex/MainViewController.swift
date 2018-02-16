@@ -40,13 +40,8 @@ class MainViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        navigationController?.navigationBar.barTintColor = .red
-        navigationController?.navigationBar.tintColor = .white
-        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont(name: "Pokemon Solid", size: 30)!]
-        navigationItem.title = "Pokédex"
-        let backItem = UIBarButtonItem()
-        backItem.title = ""
-        navigationItem.backBarButtonItem = backItem
+        setNavigationBarAttributes()
+        
         createSearchTextField()
         createFavoritesLabel()
         createFavoritesBar()
@@ -82,13 +77,6 @@ class MainViewController: UIViewController, UITextFieldDelegate {
             cell.toggleSelected(false)
         }
         favoritesCollectionView.reloadData()
-        print("Favorites Array:")
-        print(UserDefaults.standard.array(forKey: "favorites"))
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -129,8 +117,6 @@ class MainViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc func addGestureRecognizer(sender: UITextField) {
-        print("tapped")
-        
         if sender != searchBar && view.frame.origin.y == 0.0 {
             slideViewUp()
             tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
@@ -151,6 +137,9 @@ class MainViewController: UIViewController, UITextFieldDelegate {
         view.endEditing(true)
         view.removeGestureRecognizer(tap)
         slideViewDown()
+        if textField == searchBar {
+            searchButtontapped()
+        }
         return false
     }
     
@@ -173,6 +162,16 @@ class MainViewController: UIViewController, UITextFieldDelegate {
     }
     
     // MARK: Creation functions
+    
+    func setNavigationBarAttributes() {
+        navigationController?.navigationBar.barTintColor = .red
+        navigationController?.navigationBar.tintColor = .white
+        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white, NSFontAttributeName: UIFont(name: "Pokemon Solid", size: 30)!]
+        navigationItem.title = "Pokédex"
+        let backItem = UIBarButtonItem()
+        backItem.title = ""
+        navigationItem.backBarButtonItem = backItem
+    }
     
     func createSearchTextField() {
         searchBar = UITextField(frame: CGRect(x: 20, y: 80, width: view.frame.width - 40, height: 40))
@@ -247,7 +246,6 @@ class MainViewController: UIViewController, UITextFieldDelegate {
         attackTextField = UITextField(frame: CGRect(x: view.frame.width - 90, y: attackLabel.frame.minY + 10, width: 70, height: 30))
         attackTextField.backgroundColor = .white
         attackTextField.borderStyle = .roundedRect
-//        attackTextField.placeholder = "0-200"
         let attr = [NSFontAttributeName: UIFont(name: "Pokemon GB", size: 10)!]
         attackTextField.attributedPlaceholder = NSAttributedString(string: "0-200", attributes: attr)
         attackTextField.keyboardType = .numberPad
@@ -266,7 +264,6 @@ class MainViewController: UIViewController, UITextFieldDelegate {
         defenseTextField = UITextField(frame: CGRect(x: view.frame.width - 90, y: defenseLabel.frame.minY + 10, width: 70, height: 30))
         defenseTextField.backgroundColor = .white
         defenseTextField.borderStyle = .roundedRect
-//        defenseTextField.placeholder = "0-200"
         let attr = [NSFontAttributeName: UIFont(name: "Pokemon GB", size: 10)!]
         defenseTextField.attributedPlaceholder = NSAttributedString(string: "0-200", attributes: attr)
         defenseTextField.keyboardType = .numberPad
@@ -285,7 +282,6 @@ class MainViewController: UIViewController, UITextFieldDelegate {
         healthTextField = UITextField(frame: CGRect(x: view.frame.width - 90, y: healthLabel.frame.minY + 10, width: 70, height: 30))
         healthTextField.backgroundColor = .white
         healthTextField.borderStyle = .roundedRect
-//        healthTextField.placeholder = "0-200"
         let attr = [NSFontAttributeName: UIFont(name: "Pokemon GB", size: 10)!]
         healthTextField.attributedPlaceholder = NSAttributedString(string: "0-200", attributes: attr)
         healthTextField.keyboardType = .numberPad
@@ -325,10 +321,9 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
             return types.count
         } else {
             if let array = UserDefaults.standard.array(forKey: "favorites") {
-                print(array.count)
                 return array.count
             }
-            return 0 //was 10, dont know why
+            return 0
         }
     }
     
@@ -340,7 +335,6 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
                 subview.removeFromSuperview()
             }
             cell.awakeFromNib()
-//            cell.delegate = self
             return cell
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "favoritesCell", for: indexPath) as! FavoritesCollectionViewCell
@@ -364,7 +358,7 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
             if let array = UserDefaults.standard.array(forKey: "favorites") {
                 let a = array as! Array<Int>
                 for p in pokemon{
-                    if a[indexPath.item] == p.number{
+                    if a[indexPath.item] == p.number {
                         favCell.pokemon = p
                         favCell.imageView.image = ProfileViewController.getImageForPokemon(p: p)
                     }
