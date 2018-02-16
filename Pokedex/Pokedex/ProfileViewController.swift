@@ -154,7 +154,7 @@ class ProfileViewController: UIViewController {
     }
     
     @objc func showWebsite(){
-        if let link = URL(string: "https://google.com/search?q=\(pokemon.name.lowercased())") {
+        if let link = URL(string: "https://google.com/search?q=\(pokemon.name.components(separatedBy: " ")[0].lowercased())") {
             print("Opening URL")
             UIApplication.shared.open(link)
         }
