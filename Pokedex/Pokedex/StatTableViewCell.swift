@@ -16,10 +16,13 @@ class StatTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        statNameLabel = UILabel(frame: CGRect(x: 20, y: 10 , width: contentView.frame.width * 0.7, height: contentView.frame.height - 20))
+        statNameLabel = UILabel(frame: CGRect(x: 20, y: 10 , width: 300, height: self.frame.height - 20))
+        statNameLabel.font = UIFont(name: "Pokemon GB", size: 12)
         contentView.addSubview(statNameLabel)
         
-        statValueLabel = UILabel(frame: CGRect(x: contentView.frame.width - contentView.frame.width * 0.3 + 20, y: 10 , width: contentView.frame.width * 0.3, height: contentView.frame.height - 20))
+        statValueLabel = UILabel(frame: CGRect(x: statNameLabel.frame.width, y: 10 , width: 40, height: self.frame.height - 20))
+        statValueLabel.font = UIFont(name: "Pokemon GB", size: 12)
+        statValueLabel.textAlignment = .right
         contentView.addSubview(statValueLabel)
     }
 

@@ -179,8 +179,7 @@ class MainViewController: UIViewController, UITextFieldDelegate {
         searchBar.layer.cornerRadius = 5
         searchBar.textColor = .black
         searchBar.borderStyle = .roundedRect
-//        searchBar.placeholder = "Search"
-        let attr = [NSFontAttributeName: UIFont(name: "Pokemon GB", size: 15)!]
+        let attr = [NSFontAttributeName: UIFont(name: "Pokemon GB", size: 12)!]
         searchBar.attributedPlaceholder = NSAttributedString(string: "Search", attributes: attr)
         searchBar.addTarget(self, action: #selector(addGestureRecognizer), for: .touchDown)
         searchBar.delegate = self
@@ -299,7 +298,7 @@ class MainViewController: UIViewController, UITextFieldDelegate {
         searchButton.backgroundColor = .red
         searchButton.setTitle("Search", for: .normal)
         searchButton.setTitleColor(.white, for: .normal)
-        searchButton.titleLabel?.font = UIFont(name: "Pokemon GB", size: 20)
+        searchButton.titleLabel?.font = UIFont(name: "Pokemon GB", size: 17)
         searchButton.addTarget(self, action: #selector(searchButtontapped), for: .touchUpInside)
         view.addSubview(searchButton)
         
@@ -307,7 +306,7 @@ class MainViewController: UIViewController, UITextFieldDelegate {
         randomButton.backgroundColor = .red
         randomButton.setTitle("Random", for: .normal)
         randomButton.setTitleColor(.white, for: .normal)
-        randomButton.titleLabel?.font = UIFont(name: "Pokemon GB", size: 20)
+        randomButton.titleLabel?.font = UIFont(name: "Pokemon GB", size: 17)
         randomButton.addTarget(self, action: #selector(randomButtonTapped), for: .touchUpInside)
         view.addSubview(randomButton)
     }

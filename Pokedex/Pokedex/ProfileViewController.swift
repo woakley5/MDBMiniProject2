@@ -14,11 +14,11 @@ class ProfileViewController: UIViewController {
     
     var imageView: UIImageView!
     var statsTableView: UITableView!
-    var bioLabel: UILabel!
     var typeImages: [UIImageView] = []
-    var favoriteButton: UIButton!
-    var isFavorite: Bool!
+    //var isFavorite: Bool!
     var showWebsiteButton: UIBarButtonItem!
+    var favoriteSwitch: UISwitch!
+    var favoriteLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,13 +42,20 @@ class ProfileViewController: UIViewController {
         view.addSubview(circle)
         
         let typesLabel = UILabel(frame: CGRect(x: view.frame.width/2 + 10, y: view.frame.height * 0.18 - 30, width: 100, height: 20))
+        typesLabel.font = UIFont(name: "Pokemon GB", size: 16)
         typesLabel.text = "Types:"
         view.addSubview(typesLabel)
         
-        favoriteButton = UIButton(frame: CGRect(x: view.frame.width - view.frame.width/4 - 75, y: view.frame.height * 0.32, width: 150, height: 30))
-        favoriteButton.setTitleColor(.blue, for: .normal)
-        favoriteButton.addTarget(self, action: #selector(saveAsFavoriteButtonTapped), for: .touchUpInside)
-        view.addSubview(favoriteButton)
+        favoriteLabel = UILabel(frame: CGRect(x: view.frame.width - view.frame.width/4 - 75, y: view.frame.height * 0.32, width: 150, height: 30))
+        favoriteLabel.textAlignment = .left
+        favoriteLabel.font = UIFont(name: "Pokemon GB", size: 11)
+        favoriteLabel.text = "Set Favorite:"
+        view.addSubview(favoriteLabel)
+        
+        favoriteSwitch = UISwitch(frame: CGRect(x: view.frame.width - view.frame.width/4 - 75, y: view.frame.height * 0.38, width: 150, height: 30))
+        favoriteSwitch.addTarget(self, action: #selector(favoriteSwitchChanged), for: .valueChanged)
+        favoriteSwitch.onTintColor = .red
+        view.addSubview(favoriteSwitch)
         
         statsTableView = UITableView(frame: CGRect(x: 0, y: view.frame.height/2, width: view.frame.width, height: view.frame.height/2))
         statsTableView.delegate = self
@@ -81,17 +88,14 @@ class ProfileViewController: UIViewController {
         if favArray != nil { //array exists
             if favArray!.contains(where: {$0 == pokemon.number}){
                 print("Already favorited")
-                isFavorite = true
-                favoriteButton.setTitle("Remove Favorite", for: .normal)
+                favoriteSwitch.isOn = true
             }
             else{
-                isFavorite = false
-                favoriteButton.setTitle("Add as Favorite", for: .normal)
+                favoriteSwitch.isOn = false
             }
         }
         else{
-            favoriteButton.setTitle("Add as Favorite", for: .normal)
-            isFavorite = false
+            favoriteSwitch.isOn = false
         }
     }
     
@@ -121,8 +125,8 @@ class ProfileViewController: UIViewController {
         }
     }
     
-    @objc func saveAsFavoriteButtonTapped(){
-        if isFavorite{
+    @objc func favoriteSwitchChanged(){
+        if !favoriteSwitch.isOn{
             if let array = UserDefaults.standard.array(forKey: "favorites") { //array exists
                 var a = array as! Array<Int>
                 let index = a.index(of: pokemon.number)
@@ -133,8 +137,7 @@ class ProfileViewController: UIViewController {
                 let a = [pokemon.number]
                 UserDefaults.standard.set(a, forKey: "favorites")
             }
-            favoriteButton.setTitle("Add as Favorite", for: .normal)
-            isFavorite = false
+            favoriteSwitch.isOn = false
         }
         else{
             if let array = UserDefaults.standard.array(forKey: "favorites") { //array exists
@@ -146,8 +149,7 @@ class ProfileViewController: UIViewController {
                 let a = [pokemon.number]
                 UserDefaults.standard.set(a, forKey: "favorites")
             }
-            isFavorite = true
-            favoriteButton.setTitle("Remove Favorite", for: .normal)
+            favoriteSwitch.isOn = true
         }
     }
     
@@ -182,6 +184,10 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return pokemon.stats.count
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return "Stats"
     }
 }
 
