@@ -60,13 +60,15 @@ class ProfileViewController: UIViewController {
         statsTableView = UITableView(frame: CGRect(x: 0, y: view.frame.height/2, width: view.frame.width, height: view.frame.height/2))
         statsTableView.delegate = self
         statsTableView.dataSource = self
+        statsTableView.isScrollEnabled = false
+        statsTableView.allowsSelection = false
         view.addSubview(statsTableView)
         statsTableView.register(StatTableViewCell.self, forCellReuseIdentifier: "statCell")
     }
     
     override func viewWillAppear(_ animated: Bool) {
         print(pokemon.name)
-        self.navigationItem.title = pokemon.name
+        self.navigationItem.title = ProfileViewController.getNameForPokemon(p: pokemon)
         imageView.image = ProfileViewController.getImageForPokemon(p: pokemon)
         statsTableView.reloadData()
         
@@ -122,6 +124,20 @@ class ProfileViewController: UIViewController {
         else{
             print("Broken URL for " + p.name)
             return UIImage(named: "pokeball")!
+        }
+    }
+    
+    static func getNameForPokemon(p: Pokemon!) -> String {
+        if p.name.contains("(") {
+            let startIndex = p.name.index(of: "(")!
+            let endIndex = p.name.index(of: ")")!
+            var name = String(p.name[startIndex...endIndex])
+            name?.removeFirst(2)
+            name?.removeLast(2)
+            name = name?.replacingOccurrences(of: "  ", with: " ")
+            return name!
+        } else {
+            return p.name
         }
     }
     

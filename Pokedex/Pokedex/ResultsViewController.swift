@@ -189,30 +189,22 @@ extension ResultsViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let cell = cell as! PokemonTableViewCell
         cell.accessoryType = .disclosureIndicator
-        cell.pokemonImageView.image = ProfileViewController.getImageForPokemon(p: results[indexPath.row]) //static in ProfileViewController
         let p = results[indexPath.row]
+        cell.pokemonImageView.image = ProfileViewController.getImageForPokemon(p: p) //static in ProfileViewController
+        let name = ProfileViewController.getNameForPokemon(p: p)
         if p.name.contains("(") {
-            let startIndex = p.name.index(of: "(")!
-            let endIndex = p.name.index(of: ")")!
-//            let startInt = Int(p.name.distance(from: p.name.startIndex, to: startIndex))
-//            let endInt = Int(p.name.distance(from: p.name.startIndex, to: endIndex))
-//            let name = String(p.name[startInt...endInt])
-            var name = String(p.name[startIndex...endIndex])
-            name?.removeFirst(2)
-            name?.removeLast(2)
-            name = name?.replacingOccurrences(of: "  ", with: " ")
-            cell.pokemonLabel.text = "#" + String(p.number) + " " + name!
+            // mega pokemon has no species info
+            cell.pokemonLabel.text = "#" + String(p.number) + " " + name
             cell.pokemonLabel.numberOfLines = 1
         } else {
+            // add spacing between the two lines
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.lineSpacing = 7
-            let text = "#" + String(p.number) + " " + p.name + "\n" + p.species
+            let text = "#" + String(p.number) + " " + name + "\n" + p.species
             let attrString = NSMutableAttributedString(string: text)
             attrString.addAttribute(NSParagraphStyleAttributeName, value: paragraphStyle, range: NSMakeRange(0, attrString.length))
             
             cell.pokemonLabel.attributedText = attrString
-            
-//            cell.pokemonLabel.text = "#" + String(p.number) + " " + p.name + "\n" + p.species
         }
         cell.pokemonTypeImageViewOne.image = UIImage(named: String(p.types[0]).lowercased())
         

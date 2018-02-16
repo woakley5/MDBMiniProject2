@@ -336,11 +336,17 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == typesCollectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "typeCell", for: indexPath) as! TypeCollectionViewCell
+            for subview in cell.contentView.subviews {
+                subview.removeFromSuperview()
+            }
             cell.awakeFromNib()
 //            cell.delegate = self
             return cell
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "favoritesCell", for: indexPath) as! FavoritesCollectionViewCell
+            for subview in cell.contentView.subviews {
+                subview.removeFromSuperview()
+            }
             cell.awakeFromNib()
             return cell
         }
