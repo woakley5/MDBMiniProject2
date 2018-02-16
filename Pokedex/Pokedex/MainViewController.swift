@@ -81,6 +81,9 @@ class MainViewController: UIViewController, UITextFieldDelegate {
             let cell = typesCollectionView.cellForItem(at: indexPath) as! TypeCollectionViewCell
             cell.toggleSelected(false)
         }
+        favoritesCollectionView.reloadData()
+        print("Favorites Array:")
+        print(UserDefaults.standard.array(forKey: "favorites"))
     }
 
     override func didReceiveMemoryWarning() {
@@ -176,8 +179,7 @@ class MainViewController: UIViewController, UITextFieldDelegate {
         searchBar.layer.cornerRadius = 5
         searchBar.textColor = .black
         searchBar.borderStyle = .roundedRect
-//        searchBar.placeholder = "Search"
-        let attr = [NSFontAttributeName: UIFont(name: "Pokemon GB", size: 15)!]
+        let attr = [NSFontAttributeName: UIFont(name: "Pokemon GB", size: 12)!]
         searchBar.attributedPlaceholder = NSAttributedString(string: "Search", attributes: attr)
         searchBar.addTarget(self, action: #selector(addGestureRecognizer), for: .touchDown)
         searchBar.delegate = self
@@ -296,7 +298,7 @@ class MainViewController: UIViewController, UITextFieldDelegate {
         searchButton.backgroundColor = .red
         searchButton.setTitle("Search", for: .normal)
         searchButton.setTitleColor(.white, for: .normal)
-        searchButton.titleLabel?.font = UIFont(name: "Pokemon GB", size: 20)
+        searchButton.titleLabel?.font = UIFont(name: "Pokemon GB", size: 17)
         searchButton.addTarget(self, action: #selector(searchButtontapped), for: .touchUpInside)
         view.addSubview(searchButton)
         
@@ -304,7 +306,7 @@ class MainViewController: UIViewController, UITextFieldDelegate {
         randomButton.backgroundColor = .red
         randomButton.setTitle("Random", for: .normal)
         randomButton.setTitleColor(.white, for: .normal)
-        randomButton.titleLabel?.font = UIFont(name: "Pokemon GB", size: 20)
+        randomButton.titleLabel?.font = UIFont(name: "Pokemon GB", size: 17)
         randomButton.addTarget(self, action: #selector(randomButtonTapped), for: .touchUpInside)
         view.addSubview(randomButton)
     }
@@ -326,7 +328,7 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
                 print(array.count)
                 return array.count
             }
-            return 10
+            return 0 //was 10, dont know why
         }
     }
     
@@ -354,9 +356,13 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
         } else {
             let favCell = cell as! FavoritesCollectionViewCell
             if let array = UserDefaults.standard.array(forKey: "favorites") {
-                let i = array[indexPath.item] as! Int
-                favCell.pokemon = pokemon[i]
-                favCell.imageView.image = UIImage(named: pokemon[i].imageUrl)
+                let a = array as! Array<Int>
+                for p in pokemon{
+                    if a[indexPath.item] == p.number{
+                        favCell.pokemon = p
+                        favCell.imageView.image = ProfileViewController.getImageForPokemon(p: p)
+                    }
+                }
             } else {
                 favCell.pokemon = pokemon[indexPath.item]
                 favCell.imageView.image = ProfileViewController.getImageForPokemon(p: pokemon[indexPath.item])
