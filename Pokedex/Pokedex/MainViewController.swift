@@ -357,9 +357,13 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
         } else {
             let favCell = cell as! FavoritesCollectionViewCell
             if let array = UserDefaults.standard.array(forKey: "favorites") {
-                let i = array[indexPath.item] as! Int
-                favCell.pokemon = pokemon[i]
-                favCell.imageView.image = ProfileViewController.getImageForPokemon(p: pokemon[i])
+                let a = array as! Array<Int>
+                for p in pokemon{
+                    if a[indexPath.item] == p.number{
+                        favCell.pokemon = p
+                        favCell.imageView.image = ProfileViewController.getImageForPokemon(p: p)
+                    }
+                }
             } else {
                 favCell.pokemon = pokemon[indexPath.item]
                 favCell.imageView.image = ProfileViewController.getImageForPokemon(p: pokemon[indexPath.item])
